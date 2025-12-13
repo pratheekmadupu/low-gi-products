@@ -516,29 +516,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const isAuthenticated = sessionStorage.getItem('logi_user_authenticated');
-      if(!isAuthenticated){
-        window.location.href = 'auth.html';
-      }
-
-      // Mobile menu toggle
-      const hamburger = document.getElementById('hamburger');
-      const navLinks = document.getElementById('navLinks');
-      
-      if (hamburger) {
-        hamburger.addEventListener('click', function() {
-          hamburger.classList.toggle('active');
-          navLinks.classList.toggle('active');
-        });
-        
-        navLinks.querySelectorAll('a').forEach(link => {
-          link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
-          });
-        });
-      }
-      
       setTimeout(() => {
         document.querySelector('.franchise-hero').classList.add('animate-in');
         document.querySelector('.categories-section').classList.add('animate-in');
