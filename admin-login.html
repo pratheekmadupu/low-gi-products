@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGI Admin Login</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --accent: #8B6F47;
+      --accent-dark: #6B5839;
+      --accent-light: #A0825D;
+      --muted: #6b6b6b;
+      --bg: #FAFAF8;
+      --card: #ffffff;
+      --shadow: 0 10px 30px rgba(107,88,57,0.15);
+      --radius: 14px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #8B6F47 0%, #6B5839 100%);
+      color: #333;
+    }
+
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .login-left {
+      background: linear-gradient(135deg, #8B6F47 0%, #6B5839 100%);
+      color: white;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .login-left .logo-box {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .login-left .logo-box img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+
+    .login-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .login-left p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .login-left .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 15px 0;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .login-left .feature i {
+      font-size: 20px;
+      color: #F5D76E;
+    }
+
+    .login-right {
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-right h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--accent-dark);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .login-right p {
+      color: var(--muted);
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--accent-dark);
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid rgba(139, 111, 71, 0.15);
+      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(139, 111, 71, 0.1);
+      background: #fafaf8;
+    }
+
+    .form-group input::placeholder {
+      color: #bbb;
+    }
+
+    .remember-forgot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      font-size: 13px;
+    }
+
+    .remember-forgot label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .remember-forgot input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .remember-forgot a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .remember-forgot a:hover {
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px 16px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 28px rgba(139, 111, 71, 0.2);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(139, 111, 71, 0.3);
+      background: linear-gradient(90deg, var(--accent-dark), #5A4829);
+    }
+
+    .login-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c41e3a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+      border-left: 4px solid #c41e3a;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      color: #166534;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+      border-left: 4px solid #22c55e;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .admin-note {
+      background: #f0f8ff;
+      border: 1px solid #d0e8ff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #1e5a96;
+      text-align: center;
+    }
+
+    .admin-note strong {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .attempts-warning {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 15px;
+      display: none;
+      border-left: 3px solid #f59e0b;
+    }
+
+    .attempts-warning.show {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .login-card {
+        grid-template-columns: 1fr;
+      }
+
+      .login-left {
+        padding: 40px 30px;
+      }
+
+      .login-right {
+        padding: 40px 30px;
+      }
+
+      .login-left h2 {
+        font-size: 24px;
+      }
+
+      .login-right h3 {
+        font-size: 22px;
+      }
+
+      .login-left .logo-box {
+        width: 80px;
+        height: 80px;
+      }
+
+      .login-left .logo-box img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-left">
+        <div class="logo-box">
+          <img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI">
+        </div>
+        <h2>LOGI Admin</h2>
+        <p>Secure Access to Your Management Dashboard</p>
+        
+        <div style="margin-top: 30px; text-align: left;">
+          <div class="feature">
+            <i class="fas fa-lock"></i>
+            <span>Secure Authentication</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <span>Token-Based Access</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-chart-bar"></i>
+            <span>Real-time Analytics</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-images"></i>
+            <span>Product Management</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-history"></i>
+            <span>Activity Tracking</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <h3>Admin Login</h3>
+        <p>Enter your authorized credentials</p>
+
+        <div class="attempts-warning" id="attempts-warning"></div>
+        <div class="error-message" id="error-msg"></div>
+        <div class="success-message" id="success-msg"></div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="admin@logi.com" 
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Enter your password" 
+              required
+              autocomplete="current-password"
+            >
+          </div>
+
+          <div class="remember-forgot">
+            <label>
+              <input type="checkbox" id="remember" name="remember">
+              Remember me
+            </label>
+            <a href="#" onclick="resetPassword(); return false;">
+              Forgot Password?
+            </a>
+          </div>
+
+          <button type="submit" class="login-btn" id="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Sign In to Dashboard
+          </button>
+        </form>
+
+        <div class="admin-note">
+          <strong>Authorized Users Only</strong>
+          Contact your administrator for credentials
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const AUTHORIZED_USERS = {
+      'logi@123': {
+        password: 'logi123',
+        name: 'Admin',
+        role: 'super_admin'
+      }
+    };
+
+    const MAX_LOGIN_ATTEMPTS = 5;
+    const LOCKOUT_DURATION = 15 * 60 * 1000;
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+
+    let loginAttempts = parseInt(localStorage.getItem('logi_login_attempts') || '0');
+    let lastAttemptTime = parseInt(localStorage.getItem('logi_last_attempt_time') || '0');
+
+    function generateSecureToken(email) {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substr(2, 9);
+      const hash = btoa(`${email}${timestamp}${random}`);
+      return hash;
+    }
+
+    function checkAccountLockout() {
+      const now = Date.now();
+      
+      if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+        const timeSinceLock = now - lastAttemptTime;
+        
+        if (timeSinceLock < LOCKOUT_DURATION) {
+          const remainingTime = Math.ceil((LOCKOUT_DURATION - timeSinceLock) / 1000 / 60);
+          const warningDiv = document.getElementById('attempts-warning');
+          warningDiv.textContent = `Account locked. Try again in ${remainingTime} minute(s)`;
+          warningDiv.classList.add('show');
+          document.getElementById('login-btn').disabled = true;
+          return false;
+        } else {
+          loginAttempts = 0;
+          localStorage.setItem('logi_login_attempts', '0');
+          document.getElementById('attempts-warning').classList.remove('show');
+          document.getElementById('login-btn').disabled = false;
+        }
+      }
+      
+      return true;
+    }
+
+    function recordLoginAttempt() {
+      loginAttempts++;
+      lastAttemptTime = Date.now();
+      localStorage.setItem('logi_login_attempts', loginAttempts.toString());
+      localStorage.setItem('logi_last_attempt_time', lastAttemptTime.toString());
+
+      if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+        const warningDiv = document.getElementById('attempts-warning');
+        warningDiv.textContent = `Too many failed attempts. Account locked for 15 minutes.`;
+        warningDiv.classList.add('show');
+        document.getElementById('login-btn').disabled = true;
+      } else if (loginAttempts >= 3) {
+        const warningDiv = document.getElementById('attempts-warning');
+        warningDiv.textContent = `${MAX_LOGIN_ATTEMPTS - loginAttempts} attempt(s) remaining before lockout`;
+        warningDiv.classList.add('show');
+      }
+    }
+
+    function resetLoginAttempts() {
+      loginAttempts = 0;
+      localStorage.setItem('logi_login_attempts', '0');
+      localStorage.removeItem('logi_last_attempt_time');
+      document.getElementById('attempts-warning').classList.remove('show');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      if (!checkAccountLockout()) {
+        return;
+      }
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+      const successMsg = document.getElementById('success-msg');
+      const loginBtn = document.getElementById('login-btn');
+
+      errorMsg.classList.remove('show');
+      successMsg.classList.remove('show');
+
+      if (!email || !password) {
+        errorMsg.textContent = 'Please enter both email and password';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      if (!AUTHORIZED_USERS[email]) {
+        errorMsg.textContent = 'Email not authorized. Contact your administrator.';
+        errorMsg.classList.add('show');
+        recordLoginAttempt();
+        return;
+      }
+
+      const user = AUTHORIZED_USERS[email];
+      
+      if (password !== user.password) {
+        errorMsg.textContent = 'Invalid password. Please try again.';
+        errorMsg.classList.add('show');
+        recordLoginAttempt();
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+
+      setTimeout(() => {
+        const token = generateSecureToken(email);
+        const sessionData = {
+          token: token,
+          email: email,
+          name: user.name,
+          role: user.role,
+          loginTime: Date.now(),
+          expiresAt: Date.now() + SESSION_TIMEOUT
+        };
+
+        sessionStorage.setItem('logi_auth_token', token);
+        sessionStorage.setItem('logi_session', JSON.stringify(sessionData));
+
+        if (document.getElementById('remember').checked) {
+          localStorage.setItem('logi_admin_email', email);
+          localStorage.setItem('logi_admin_role', user.role);
+        }
+
+        const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+        logs.push({
+          email: email,
+          name: user.name,
+          role: user.role,
+          timestamp: new Date().toISOString(),
+          token: token,
+          type: 'admin'
+        });
+        localStorage.setItem('logi_signin_logs', JSON.stringify(logs));
+
+        resetLoginAttempts();
+
+        successMsg.textContent = 'Authentication successful! Redirecting...';
+        successMsg.classList.add('show');
+
+        setTimeout(() => {
+          window.location.href = 'admin-panel.html';
+        }, 1000);
+      }, 800);
+    });
+
+    function resetPassword() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert('Please enter your email address first');
+        return;
+      }
+
+      if (!AUTHORIZED_USERS[email]) {
+        alert('Email not found in authorized users');
+        return;
+      }
+
+      alert(`Password reset link would be sent to ${email}. For now, contact your administrator.`);
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      checkAccountLockout();
+
+      const savedEmail = localStorage.getItem('logi_admin_email');
+      if (savedEmail) {
+        document.getElementById('email').value = savedEmail;
+        document.getElementById('remember').checked = true;
+        document.getElementById('password').focus();
+      }
+
+      if (sessionStorage.getItem('logi_auth_token')) {
+        window.location.href = 'admin-panel.html';
+      }
+    });
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden === false) {
+        checkAccountLockout();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGI - Shopping Cart</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: #FFFFFF; }
+    
+    .cart-section { padding: 2rem 5%; max-width: 1200px; margin: 140px auto 0; }
+    .cart-section h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--dark); margin-bottom: 2rem; text-align: center; }
+    
+    .cart-container { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; margin-top: 2rem; }
+    
+    .cart-items { background: #f9f9f9; border-radius: 15px; padding: 2rem; }
+    .cart-empty { text-align: center; padding: 3rem; color: #999; font-size: 1.2rem; }
+    .cart-empty a { color: var(--brown); font-weight: 600; text-decoration: underline; }
+    
+    .cart-item { 
+      display: grid; 
+      grid-template-columns: 100px 1fr 100px; 
+      gap: 2rem; 
+      align-items: center; 
+      padding: 2rem 0; 
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    
+    .item-image { width: 100px; height: 100px; background: #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .item-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    
+    .item-details h3 { font-size: 1.3rem; color: var(--dark); margin-bottom: 0.5rem; }
+    .item-price { font-size: 1.2rem; color: var(--brown); font-weight: 700; margin-bottom: 1rem; }
+    
+    .quantity-control { display: flex; align-items: center; gap: 0.5rem; }
+    .quantity-control button { 
+      width: 30px; 
+      height: 30px; 
+      border: 1px solid #ddd; 
+      background: white; 
+      cursor: pointer; 
+      border-radius: 5px; 
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .quantity-control button:hover { background: var(--brown); color: white; }
+    .quantity-control span { width: 30px; text-align: center; font-weight: 600; }
+    
+    .remove-btn { 
+      background: #ff4444; 
+      color: white; 
+      border: none; 
+      padding: 8px 15px; 
+      border-radius: 5px; 
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+    .remove-btn:hover { background: #cc0000; }
+    
+    .cart-summary { 
+      background: white; 
+      border-radius: 15px; 
+      padding: 2rem; 
+      border: 2px solid #f0f0f0;
+      height: fit-content;
+      position: sticky;
+      top: 140px;
+    }
+    .summary-item { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1rem; }
+    .summary-total { 
+      display: flex; 
+      justify-content: space-between; 
+      font-size: 1.5rem; 
+      font-weight: 700; 
+      color: var(--brown); 
+      border-top: 2px solid #f0f0f0; 
+      padding-top: 1rem; 
+      margin-top: 1rem;
+    }
+    
+    .checkout-btn { 
+      width: 100%; 
+      padding: 15px; 
+      background: var(--brown); 
+      color: white; 
+      border: none; 
+      border-radius: 50px; 
+      font-size: 1.1rem; 
+      font-weight: 700; 
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: 0.3s;
+    }
+    .checkout-btn:hover { background: var(--gold); color: var(--dark); }
+    .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
+    
+    .continue-shopping { 
+      width: 100%; 
+      padding: 12px; 
+      background: #f0f0f0; 
+      color: var(--dark); 
+      border: none; 
+      border-radius: 50px; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: 0.3s;
+    }
+    .continue-shopping:hover { background: #e0e0e0; }
+    
+    @media (max-width: 768px) {
+      .cart-section {
+        padding: 1.5rem 3%;
+        margin-top: 100px;
+      }
+      .cart-section h1 {
+        font-size: 2rem;
+      }
+      .cart-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .cart-summary {
+        position: relative;
+        top: auto;
+      }
+      .cart-item {
+        grid-template-columns: 80px 1fr 80px;
+        gap: 1rem;
+        padding: 1rem 0;
+      }
+      .item-image {
+        width: 80px;
+        height: 80px;
+      }
+      .item-details h3 {
+        font-size: 1.1rem;
+      }
+      .remove-btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .cart-section {
+        padding: 1rem 2%;
+        margin-top: 80px;
+      }
+      .cart-section h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .cart-container {
+        gap: 1rem;
+      }
+      .cart-items {
+        padding: 1rem;
+        border-radius: 10px;
+      }
+      .cart-empty {
+        padding: 2rem 1rem;
+        font-size: 1rem;
+      }
+      .cart-item {
+        grid-template-columns: 70px 1fr;
+        gap: 0.8rem;
+        padding: 0.8rem 0;
+      }
+      .item-image {
+        width: 70px;
+        height: 70px;
+      }
+      .item-details h3 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+      }
+      .item-price {
+        font-size: 1rem;
+      }
+      .quantity-control {
+        gap: 0.3rem;
+      }
+      .quantity-control button {
+        width: 25px;
+        height: 25px;
+        font-size: 0.85rem;
+      }
+      .quantity-control span {
+        width: 25px;
+        font-size: 0.9rem;
+      }
+      .remove-btn {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+        align-self: flex-start;
+      }
+      .cart-summary {
+        padding: 1.5rem;
+        border-radius: 10px;
+      }
+      .cart-summary h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+      .summary-item {
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+      }
+      .summary-total {
+        font-size: 1.2rem;
+        margin-top: 0.8rem;
+        padding-top: 0.8rem;
+      }
+      .checkout-btn {
+        padding: 12px;
+        font-size: 0.95rem;
+        margin-top: 1rem;
+      }
+      .continue-shopping {
+        padding: 10px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI"></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">Shop</a>
+        <a href="demo.html">Demo</a>
+        <a href="franchise.html">Franchise</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <button id="logout-btn" class="logout-btn" style="display:none; padding: 10px 20px; background: linear-gradient(90deg, #8B6F47, #6B5839); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">Logout</button>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+      
+      if (hamburger) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+      }
+
+      const logoutBtn = document.getElementById('logout-btn');
+      if(logoutBtn) {
+        logoutBtn.style.display = 'none';
+      }
+    });
+  </script>
+
+  <section class="cart-section">
+    <h1>Shopping Cart</h1>
+    
+    <div class="cart-container">
+      <!-- Cart Items -->
+      <div class="cart-items" id="cart-items-container">
+        <div class="cart-empty">
+          Your cart is empty. <br><a href="products.html">Continue Shopping</a>
+        </div>
+      </div>
+
+      <!-- Cart Summary -->
+      <div class="cart-summary">
+        <h3 style="margin-bottom: 1.5rem; color: var(--dark);">Order Summary</h3>
+        <div class="summary-item">
+          <span>Subtotal:</span>
+          <span id="subtotal">₹0</span>
+        </div>
+        <div class="summary-item">
+          <span>Shipping:</span>
+          <span id="shipping">₹0</span>
+        </div>
+        <div class="summary-item">
+          <span>Tax (18%):</span>
+          <span id="tax">₹0</span>
+        </div>
+        <div class="summary-total">
+          <span>Total:</span>
+          <span id="total">₹0</span>
+        </div>
+        <button class="checkout-btn" id="checkout-btn" disabled>Proceed to Checkout</button>
+        <button class="continue-shopping" onclick="window.location.href='products.html'">Continue Shopping</button>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://wa.me/919985309102" target="_blank" class="whatsapp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <footer>© 2025 LOGI - All Rights Reserved</footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function getProductImage(productName) {
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const product = products.find(p => p.name === productName);
+      return product ? product.image : 'https://via.placeholder.com/100?text=No+Image';
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items-container');
+      
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="cart-empty">Your cart is empty. <br><a href="products.html">Continue Shopping</a></div>';
+        document.getElementById('checkout-btn').disabled = true;
+        updateSummary();
+        return;
+      }
+
+      document.getElementById('checkout-btn').disabled = false;
+      container.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+          <div class="item-image">
+            <img src="${getProductImage(item.name)}" alt="${item.name}">
+          </div>
+          <div class="item-details">
+            <h3>${item.name}</h3>
+            <div class="item-price">₹${item.price}</div>
+            <div class="quantity-control">
+              <button onclick="updateQuantity(${index}, -1)">-</button>
+              <span>${item.quantity || 1}</span>
+              <button onclick="updateQuantity(${index}, 1)">+</button>
+            </div>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        </div>
+      `).join('');
+
+      updateSummary();
+    }
+
+    function updateQuantity(index, change) {
+      cart[index].quantity = (cart[index].quantity || 1) + change;
+      if (cart[index].quantity < 1) {
+        cart.splice(index, 1);
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateSummary() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      const shipping = subtotal > 0 ? 100 : 0;
+      const tax = Math.round(subtotal * 0.18);
+      const total = subtotal + shipping + tax;
+
+      document.getElementById('subtotal').textContent = `₹${subtotal}`;
+      document.getElementById('shipping').textContent = `₹${shipping}`;
+      document.getElementById('tax').textContent = `₹${tax}`;
+      document.getElementById('total').textContent = `₹${total}`;
+    }
+
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+      if (cart.length > 0) {
+        window.location.href = 'checkout.html';
+      }
+    });
+
+    // Initial render
+    renderCart();
+  </script>
+</body>
+</html>

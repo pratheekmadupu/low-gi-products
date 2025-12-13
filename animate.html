@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGI - Demo</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        #canvas-container { position: fixed; top: 120px; left: 0; width: 100vw; height: calc(100vh - 120px); z-index: 1; }
+        body { margin: 0; overflow: hidden; background-color: #000000; font-family: monospace; }
+        html { background-color: #000000; }
+        header { position: fixed; z-index: 101; width: 100%; background: #000000; }
+        header nav { background: #000000; padding: 1rem 5%; width: 100%; }
+
+        /* Status UI - HIDDEN AS REQUESTED */
+        #debug-panel {
+            display: none; /* Hides the panel completely */
+            position: fixed; top: 140px; left: 10px; z-index: 100;
+            background: rgba(0, 20, 0, 0.8); color: #00ff88;
+            padding: 10px; border: 1px solid #00ff88; border-radius: 4px;
+            pointer-events: none; min-width: 250px;
+        }
+
+        /* Camera Preview */
+        #video-preview {
+            position: fixed; bottom: 10px; right: 10px; width: 160px; height: 120px;
+            background: #222; border: 1px solid #555; z-index: 50;
+            transform: scaleX(-1); /* Mirror */
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            #canvas-container { top: 80px; height: calc(100vh - 80px); }
+            
+            header nav { padding: 0.75rem 3%; }
+            
+            .logo img { height: 100px; }
+            
+            .hamburger { display: flex; }
+            
+            .nav-links {
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: #000000;
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+            
+            .nav-links.active { max-height: 300px; }
+            
+            .nav-links a {
+                padding: 15px 5%;
+                margin: 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                font-size: 0.95rem;
+            }
+            
+            #video-preview { width: 120px; height: 90px; }
+        }
+
+        @media (max-width: 480px) {
+            #canvas-container { top: 70px; height: calc(100vh - 70px); }
+            
+            header nav { padding: 0.5rem 2%; }
+            
+            .logo img { height: 80px; }
+            
+            #video-preview { width: 100px; height: 75px; bottom: 5px; right: 5px; }
+        }
+    </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI"></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">Shop</a>
+        <a href="demo.html">Demo</a>
+        <a href="franchise.html">Franchise</a>
+        <a href="contact.html">Contact</a>
+        <button id="logout-btn" style="display:none; background:none; border:none; color:#8B6F47; font-weight:600; cursor:pointer; font-size:1rem; padding:0;">Logout</button>
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+    <div id="debug-panel">
+        <div><b>STATUS LOG:</b></div>
+        <div id="logs">...</div>
+        <br>
+        <div><b>CONTROLS:</b></div>
+        <div>• Move Hand/Mouse: Interact</div>
+        <div>• Pinch/Click: Change Text</div>
+    </div>
+
+    <video id="video-preview" playsinline autoplay muted></video>
+    
+    <div id="canvas-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+        // --- Settings ---
+        const PRODUCTS = [
+            "Logi Products", "Multi Millet\nMalt", "Ragi Malt\nPowder", 
+            "Low GI Rice", "Millet Choco\nPowder"
+        ];
+
+        // Responsive config based on screen size
+        let particleCount = 4000;
+        let particleSize = 2.0;
+        let textScale = 0.8;
+
+        if (window.innerWidth <= 480) {
+            particleCount = 1500;
+            particleSize = 1.5;
+            textScale = 0.6;
+        } else if (window.innerWidth <= 768) {
+            particleCount = 2500;
+            particleSize = 1.8;
+            textScale = 0.7;
+        }
+
+        const CONFIG = {
+            particleCount: particleCount,
+            particleSize: particleSize,
+            textScale: textScale
+        };
+
+        // --- Globals ---
+        let scene, camera, renderer, particles;
+        let positions, velocities, targets, colors; // Buffers
+        let handPos = new THREE.Vector3(9999, 9999, 0); // Off-screen default
+        let isPinching = false;
+        let productIdx = 0;
+        let lastPinch = 0;
+
+        // Logging Helper (Panel is hidden, but logs still go to console)
+        const logDiv = document.getElementById('logs');
+        function log(msg) {
+            if (logDiv) logDiv.innerHTML += `<div>> ${msg}</div>`;
+            console.log(msg);
+        }
+
+        init();
+
+        async function init() {
+            log("System Starting...");
+
+            // 1. Setup Three.js
+            try {
+                setupScene();
+                log("Scene Created.");
+            } catch (e) { log("Error creating scene: " + e); return; }
+
+            // 2. Create Particles
+            createParticles();
+            log("Particles Generated.");
+
+            // 3. Generate First Text
+            generateTextShape(PRODUCTS[0]);
+            log("Text Rasterized (Internal).");
+
+            // 4. Start Animation Loop Immediately
+            animate();
+            log("Animation Started.");
+
+            // 5. Attempt Camera (Async)
+            log("Attempting Camera...");
+            try {
+                await setupCamera();
+            } catch (e) {
+                log("Camera Failed/Skipped. Using Mouse.");
+            }
+            
+            // Mouse Fallback (for pinch click)
+            window.addEventListener('mousedown', () => switchText());
+            // Touch support for mobile
+            window.addEventListener('touchstart', () => switchText());
+            // Mouse move listener removed as interaction is disabled
+        }
+
+        function setupScene() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 1000);
+            camera.position.z = 300;
+            
+            renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth/window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        function createParticles() {
+            const geo = new THREE.BufferGeometry();
+            positions = new Float32Array(CONFIG.particleCount * 3);
+            colors = new Float32Array(CONFIG.particleCount * 3);
+            velocities = [];
+            targets = [];
+
+            for(let i=0; i<CONFIG.particleCount; i++) {
+                // Start random
+                positions[i*3] = (Math.random()-0.5)*400;
+                positions[i*3+1] = (Math.random()-0.5)*400;
+                positions[i*3+2] = (Math.random()-0.5)*400;
+                
+                colors[i*3] = 1; colors[i*3+1] = 1; colors[i*3+2] = 1; // White
+
+                velocities.push(new THREE.Vector3(0,0,0));
+                targets.push(new THREE.Vector3(0,0,0));
+            }
+
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: CONFIG.particleSize,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+        }
+
+        function generateTextShape(text) {
+            // 1. Create a hidden canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = 600; 
+            const height = 300;
+            canvas.width = width;
+            canvas.height = height;
+
+            // 2. Draw Text
+            ctx.fillStyle = '#000000'; // Background
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#FFFFFF'; // Text
+            ctx.font = 'Bold 80px Arial'; // Standard Font
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Handle newlines
+            const lines = text.split('\n');
+            const lineHeight = 90;
+            const startY = height/2 - ((lines.length-1)*lineHeight)/2;
+            
+            lines.forEach((line, i) => {
+                ctx.fillText(line, width/2, startY + (i*lineHeight));
+            });
+
+            // 3. Scan Pixels
+            const data = ctx.getImageData(0, 0, width, height).data;
+            const validPoints = [];
+            
+            for(let y=0; y<height; y+=4) { // Skip pixels for speed
+                for(let x=0; x<width; x+=4) {
+                    const index = (y * width + x) * 4;
+                    // If pixel is bright (white text)
+                    if(data[index] > 100) {
+                        validPoints.push({
+                            x: (x - width/2) * CONFIG.textScale,
+                            y: -(y - height/2) * CONFIG.textScale // Flip Y
+                        });
+                    }
+                }
+            }
+
+            // 4. Assign to Particles
+            for(let i=0; i<CONFIG.particleCount; i++) {
+                if (validPoints.length === 0) {
+                    targets[i].set(0,0,0);
+                    continue;
+                }
+                
+                const p = validPoints[i % validPoints.length];
+                targets[i].set(p.x, p.y, 0);
+                
+                // Jitter targets
+                targets[i].x += (Math.random()-0.5)*2;
+                targets[i].y += (Math.random()-0.5)*2;
+            }
+        }
+
+        // --- Physics Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const posAttr = particles.geometry.attributes.position;
+            const colAttr = particles.geometry.attributes.color;
+            
+            // Hue based on X position (Still active for color change)
+            const hue = Math.abs((handPos.x/200)%1);
+            const baseColor = new THREE.Color().setHSL(hue, 0.8, 0.6);
+
+            for(let i=0; i<CONFIG.particleCount; i++) {
+                const t = targets[i];
+                const v = velocities[i];
+                
+                const px = posAttr.getX(i);
+                const py = posAttr.getY(i);
+                const pz = posAttr.getZ(i);
+
+                // 1. Seek Target (Form text)
+                v.x += (t.x - px) * 0.05;
+                v.y += (t.y - py) * 0.05;
+                v.z += (t.z - pz) * 0.05;
+
+                // --- GESTURE REPULSION REMOVED ---
+                /*
+                // 2. Repel from Hand
+                const dx = px - handPos.x;
+                const dy = py - handPos.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if(dist < 60) {
+                    const force = (60 - dist) * 2.0;
+                    const angle = Math.atan2(dy, dx);
+                    v.x += Math.cos(angle) * force;
+                    v.y += Math.sin(angle) * force;
+                    v.z += (Math.random()-0.5) * force;
+                }
+                */
+                // --------------------------------
+
+                // 3. Move
+                v.multiplyScalar(0.85); // Friction
+                posAttr.setXYZ(i, px + v.x, py + v.y, pz + v.z);
+
+                // 4. Color
+                const speed = v.length();
+                colAttr.setXYZ(i, 
+                    baseColor.r + speed*0.1, 
+                    baseColor.g + speed*0.05, 
+                    baseColor.b + speed*0.05
+                );
+            }
+
+            posAttr.needsUpdate = true;
+            colAttr.needsUpdate = true;
+            renderer.render(scene, camera);
+        }
+
+        function switchText() {
+            productIdx = (productIdx + 1) % PRODUCTS.length;
+            const txt = PRODUCTS[productIdx];
+            log("Switching to: " + txt.replace('\n', ' '));
+            generateTextShape(txt);
+            
+            // Boom effect on switch remains
+            velocities.forEach(v => {
+                v.x += (Math.random()-0.5)*30;
+                v.y += (Math.random()-0.5)*30;
+                v.z += (Math.random()-0.5)*30;
+            });
+        }
+
+        // --- Camera Setup ---
+        async function setupCamera() {
+            const videoElement = document.getElementById('video-preview');
+            const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+            
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+
+            hands.onResults(onHandResults);
+
+            const cameraObj = new Camera(videoElement, {
+                onFrame: async () => { await hands.send({image: videoElement}); },
+                width: 640,
+                height: 480
+            });
+            
+            await cameraObj.start();
+            log("Camera Active & Tracking.");
+        }
+
+        function onHandResults(results) {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const lm = results.multiHandLandmarks[0];
+                const index = lm[8];
+                
+                // Map coordinates for color change and pinch detection
+                const x = (0.5 - index.x) * 400; 
+                const y = (0.5 - index.y) * 300;
+                
+                handPos.set(x, y, 0);
+
+                // Pinch Detection (Still active for text switching)
+                const thumb = lm[4];
+                const dist = Math.hypot(index.x - thumb.x, index.y - thumb.y);
+                
+                if (dist < 0.05) {
+                    if (!isPinching && (Date.now() - lastPinch > 1000)) {
+                        isPinching = true;
+                        lastPinch = Date.now();
+                        switchText();
+                    }
+                } else {
+                    isPinching = false;
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    hamburger.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+                
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        hamburger.classList.remove('active');
+                        navLinks.classList.remove('active');
+                    });
+                });
+            }
+            
+            const logoutBtn = document.getElementById('logout-btn');
+            if(logoutBtn) {
+                logoutBtn.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

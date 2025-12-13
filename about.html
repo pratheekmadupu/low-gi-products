@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About LOGI - Premium Nutrition</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .about-hero {
+      padding: 140px 5% 80px;
+      background: linear-gradient(rgba(139,69,19,0.92), rgba(139,69,19,0.95)), url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80') center/cover;
+      color: white;
+      text-align: center;
+    }
+    .about-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      margin-bottom: 1rem;
+    }
+    .content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 5%;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(139,69,19,0.15);
+      margin-top: -80px;
+      position: relative;
+      z-index: 10;
+    }
+    .content h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--brown);
+      font-size: 2.5rem;
+      margin: 2rem 0 1rem;
+    }
+    .values {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .value-card {
+      text-align: center;
+      padding: 2rem;
+      background: var(--cream);
+      border-radius: 15px;
+    }
+    .value-card i {
+      font-size: 3rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .benefits-section {
+      background: linear-gradient(135deg, rgba(139,69,19,0.05) 0%, rgba(218,165,32,0.05) 100%);
+      padding: 4rem 5%;
+      margin-top: 3rem;
+      border-radius: 20px;
+    }
+    .benefits-section h2 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: var(--brown);
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .benefit-item {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(139,69,19,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .benefit-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(139,69,19,0.15);
+    }
+    .benefit-icon {
+      font-size: 2.5rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .benefit-item h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--brown);
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+    }
+    .benefit-item p {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .logout-btn {
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #8B6F47, #6B5839);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139,111,71,0.3);
+      background: linear-gradient(90deg, #6B5839, #5A4829);
+    }
+    .about-hero {
+      opacity: 0;
+      animation: fadeUp 1s ease-out forwards;
+    }
+    .about-hero.animate-in {
+      animation-delay: 0.2s;
+    }
+    .content {
+      opacity: 0;
+      animation: fadeUp 1s ease-out forwards;
+    }
+    .content.animate-in {
+      animation-delay: 0.4s;
+    }
+    .benefits-section {
+      opacity: 0;
+      animation: fadeUp 1s ease-out forwards;
+    }
+    .benefits-section.animate-in {
+      animation-delay: 0.6s;
+    }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (max-width: 768px) {
+      .about-hero {
+        padding: 120px 3% 40px;
+      }
+      .about-hero h1 {
+        font-size: 2.5rem;
+      }
+      .content {
+        margin-top: -40px;
+        padding: 2rem 3%;
+      }
+      .content h2 {
+        font-size: 1.8rem;
+      }
+      .values {
+        gap: 1rem;
+      }
+      .benefit-item h3 {
+        font-size: 1.1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .about-hero {
+        padding: 100px 2% 30px;
+      }
+      .about-hero h1 {
+        font-size: 1.8rem;
+      }
+      .about-hero p {
+        font-size: 0.9rem;
+      }
+      .content {
+        margin-top: -30px;
+        padding: 1.5rem 2%;
+        border-radius: 10px;
+      }
+      .content h2 {
+        font-size: 1.4rem;
+        margin: 1rem 0 0.5rem;
+      }
+      .content p {
+        font-size: 0.9rem;
+      }
+      .benefits-grid {
+        gap: 1rem;
+      }
+      .benefit-item {
+        padding: 1.5rem;
+      }
+      .benefit-icon {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI"></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">Shop</a>
+        <a href="demo.html">Demo</a>
+        <a href="franchise.html">Franchise</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <button id="logout-btn" class="logout-btn" style="display:none;">Logout</button>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+      
+      if (hamburger) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+      }
+
+      setTimeout(() => {
+        document.querySelector('.about-hero').classList.add('animate-in');
+        document.querySelector('.content').classList.add('animate-in');
+        document.querySelector('.benefits-section').classList.add('animate-in');
+      }, 100);
+
+      const logoutBtn = document.getElementById('logout-btn');
+      if(logoutBtn) {
+        logoutBtn.style.display = 'none';
+      }
+    });
+  </script>
+
+  <section class="about-hero">
+    <h1>About LOGI</h1>
+    <p>Strength Through Science & Nature</p>
+  </section>
+
+  <div class="content">
+    <p>Founded with a vision to empower every individual with pure, powerful, and scientifically proven nutrition, <strong>LOGI</strong> stands for strength, resilience, and unstoppable energy — just like the mighty rhino.</p>
+    
+    <p>Every LOGI product is crafted using premium ingredients, backed by clinical research, and manufactured in FSSAI & GMP-certified facilities. We believe true strength comes from within — and we're here to fuel it.</p>
+
+    <h2>Our Core Values</h2>
+    <div class="values">
+      <div class="value-card">
+        <i class="fas fa-leaf"></i>
+        <h3>100% Natural</h3>
+        <p>No fillers, artificial colors, or preservatives</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-vial"></i>
+        <h3>Lab Tested</h3>
+        <p>Third-party tested for purity & potency</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Trusted Quality</h3>
+        <p>Made in India with global standards</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-heart"></i>
+        <h3>Customer First</h3>
+        <p>Over 100,000+ happy warriors</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="benefits-section">
+    <h2>Why Choose LOGI Low GI Nutrition?</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <i class="fas fa-chart-line benefit-icon"></i>
+        <h3>Stabilizes Blood Sugar Levels</h3>
+        <p>Prevent sudden spikes in blood glucose after meals. Our slow-release carbohydrates ensure your sugar levels remain within a safe range, making it safer than regular food for diabetics.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-utensils benefit-icon"></i>
+        <h3>Enhances Satiety</h3>
+        <p>Rich in fiber and protein, our products signal your brain that you are full. This reduces constant hunger pangs, preventing overeating which is crucial for weight loss.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-weight benefit-icon"></i>
+        <h3>Supports Weight Management</h3>
+        <p>By replacing a high-calorie meal with a measured Low GI drink, you create a calorie deficit while still getting essential nutrients, directly aiding in fat loss.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-syringe benefit-icon"></i>
+        <h3>Improves Insulin Sensitivity</h3>
+        <p>Regular consumption of Low GI foods helps the body use insulin more effectively. Over time, this decreases insulin resistance, making it easier for your body to naturally manage blood sugar.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-bolt benefit-icon"></i>
+        <h3>Provides Sustained Energy</h3>
+        <p>Instead of a quick burst followed by tiredness, our products provide a steady stream of fuel, keeping you active and energetic throughout the day without fatigue.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-candy-cane benefit-icon"></i>
+        <h3>Reduces Sugar Cravings</h3>
+        <p>Fluctuating blood sugar is the main cause of sugar cravings. By keeping your levels flat and stable, these products reduce the urge to snack on unhealthy sweets or junk food.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-heart benefit-icon"></i>
+        <h3>Heart Health Support</h3>
+        <p>Fortified with heart-healthy fats (MUFA) and low in cholesterol. This helps in managing lipid profiles, reducing the risk of heart issues common in diabetics.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-dumbbell benefit-icon"></i>
+        <h3>Preserves Muscle Mass</h3>
+        <p>High-quality protein ensures you burn fat while keeping your muscles strong. When losing weight, you often lose muscle too — our formula prevents that.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-apple-alt benefit-icon"></i>
+        <h3>Supports Digestive Health</h3>
+        <p>High fiber content (FOS/Inulin) promotes healthy gut bacteria and ensures regular bowel movements, preventing constipation which can be a side effect of some diabetic medications.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-pills benefit-icon"></i>
+        <h3>Corrects Nutritional Deficiencies</h3>
+        <p>Diabetics often have strict diet restrictions that lead to vitamin gaps. Our complete nutrition is packed with vitamins B12, D, C, and minerals like Magnesium and Chromium.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-clock benefit-icon"></i>
+        <h3>Convenient Meal Replacement</h3>
+        <p>For busy professionals or elderly people, this serves as a safe, instant, and balanced meal replacement option that requires no preparation.</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-shield benefit-icon"></i>
+        <h3>Reduces Long-term Complications</h3>
+        <p>By maintaining better glycemic control over time, our products help delay or prevent severe diabetic complications like neuropathy or retinopathy.</p>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://wa.me/919985309102" target="_blank" class="whatsapp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <footer>© 2025 LOGI - All Rights Reserved</footer>
+</body>
+</html>

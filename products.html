@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGI - Products</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: #FFFFFF; }
+    .hero { padding: 140px 5% 2rem; text-align:center; background: transparent; color: var(--dark); display: none; }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:4rem; margin-bottom: 1rem; }
+    .hero p { margin: 0; font-size: 1.5rem; }
+    
+    .products-section { padding: 2rem 5%; max-width: 1400px; margin: 0 auto; margin-top: 120px; }
+    .products-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:2.5rem; }
+    
+    .product-card { 
+      background:white; 
+      border-radius:15px; 
+      overflow:hidden; 
+      box-shadow:0 10px 30px rgba(0,0,0,0.1); 
+      transition:0.4s ease;
+      cursor: pointer;
+    }
+    .product-card:hover { 
+      transform:translateY(-10px); 
+      box-shadow:0 20px 50px rgba(0,0,0,0.2);
+    }
+    .product-card img { 
+      width:100%;
+      height:auto;
+      max-height:320px;   /* limit very tall images */
+      object-fit:contain; /* show full image without cropping */
+      display:block;
+      margin:0 auto;
+    }
+    .product-info { 
+      padding:2rem; 
+      text-align:center; 
+    }
+    .product-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+    .product-info p {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 1rem;
+      min-height: 40px;
+    }
+    .price { 
+      font-size: 1.8rem; 
+      color: var(--brown); 
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .add-to-cart { 
+      background: var(--brown); 
+      color: white; 
+      border: none; 
+      padding: 12px 30px; 
+      border-radius: 50px; 
+      cursor: pointer; 
+      font-weight: 600;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+    .add-to-cart:hover { 
+      background: var(--gold); 
+      color: var(--dark); 
+      transform: scale(1.05);
+    }
+    
+    .cart-icon { 
+      position: fixed; 
+      bottom: 20px; 
+      right: 20px; 
+      background: var(--gold); 
+      color: var(--dark); 
+      width: 70px; 
+      height: 70px; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 2rem; 
+      box-shadow: 0 10px 30px rgba(212,160,23,0.5); 
+      cursor: pointer; 
+      z-index: 999;
+      transition: 0.3s;
+    }
+    .cart-icon:hover { transform: scale(1.1); }
+    .cart-count { 
+      position: absolute; 
+      top: -10px; 
+      right: -10px; 
+      background: red; 
+      color: white; 
+      width: 28px; 
+      height: 28px; 
+      border-radius: 50%; 
+      font-size: 0.9rem; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-weight: 700;
+    }
+    .quantity-select {
+      margin: 1rem 0;
+    }
+    .quantity-select label {
+      display: block;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .quantity-select select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
+      background: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .quantity-select select:hover {
+      border-color: var(--brown);
+    }
+    .quantity-select select:focus {
+      outline: none;
+      border-color: var(--brown);
+      box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
+    }
+    .products-section {
+      opacity: 0;
+      animation: fadeUp 1s ease-out forwards;
+    }
+    .products-section.animate-in {
+      animation-delay: 0.2s;
+    }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (max-width: 768px) {
+      .products-section {
+        padding: 1.5rem 3%;
+        margin-top: 80px;
+      }
+      .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+      .product-card img {
+        max-height: 250px;
+      }
+      .product-info {
+        padding: 1.5rem;
+      }
+      .product-info h3 {
+        font-size: 1.3rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .products-section {
+        padding: 1rem 2%;
+        margin-top: 70px;
+      }
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .product-card {
+        border-radius: 10px;
+      }
+      .product-card img {
+        max-height: 200px;
+      }
+      .product-info {
+        padding: 1rem;
+      }
+      .product-info h3 {
+        font-size: 1.1rem;
+      }
+      .product-info p {
+        font-size: 0.85rem;
+        min-height: auto;
+      }
+      .price {
+        font-size: 1.5rem;
+      }
+      .add-to-cart {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+      .cart-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI"></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">Shop</a>
+        <a href="demo.html">Demo</a>
+        <a href="franchise.html">Franchise</a>
+        <a href="contact.html">Contact</a>
+        <button id="logout-btn" style="display:none; background:none; border:none; color:#8B6F47; font-weight:600; cursor:pointer; font-size:1rem; padding:0;">Logout</button>
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Our Products</h1>
+    <p>Premium Nutrition for Peak Performance</p>
+  </section>
+
+  <div style="text-align: center; padding: 2rem; background: linear-gradient(90deg, #f5f5f5, #ffffff);">
+    <a href="demo.html" style="display: inline-block; padding: 12px 30px; background: var(--gold); color: var(--dark); text-decoration: none; border-radius: 50px; font-weight: 600; transition: 0.3s; font-size: 1rem;">
+      ✨ View Product Showcase Demo
+    </a>
+  </div>
+
+  <section class="products-section">
+    <div class="products-grid" id="products-grid">
+      <!-- Products loaded dynamically from admin panel -->
+    </div>
+  </section>
+
+  <!-- Shopping Cart Icon -->
+  <div class="cart-icon" onclick="toggleCart()">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="cart-count" id="cart-count">0</div>
+  </div>
+
+  <a href="https://wa.me/919985309102" target="_blank" class="whatsapp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <footer>© 2025 LOGI - All Rights Reserved</footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    const defaultProducts = [
+      {
+        id: 1,
+        name: 'Nutritious Ragi Malt Powder-500g',
+        image: 'https://i.ibb.co/Cs61R3Fd/Gemini-Generated-Image-dwv1v9dwv1v9dwv1.png',
+        description: 'Controls diabetes, lowers LDL, regulates blood pressure, boosts testosterone, helps in weight loss, improves immunity, increases bone & muscle strength. Perfect for all ages.',
+        category: 'Malt Powder',
+        price: 250,
+      },
+      {
+        id: 2,
+        name: 'Nutritional Multimillet Flour-500g',
+        image: 'https://i.ibb.co/kV0BPpv6/Gemini-Generated-Image-er69hzer69hzer69.png',
+        description: 'Delicious & Nutritious! Low GI helps regulate diabetes, supports weight management, improves immunity & makes body healthy. Best for all age groups. 500g pack.',
+        category: 'Flour',
+        price: 250,
+      },
+      {
+        id: 3,
+        name: 'LOGI Low GI Rice',
+        image: 'https://i.ibb.co/5xtSdfNL/Gemini-Generated-Image-uedgjwuedgjwuedg.png',
+        description: 'Low GI for Smart Living! Diabetic friendly, good for all ages, supports weight control, rich in protein & nutrients. Lab tested in NABL accredited facility. 950g pack.',
+        category: 'Rice',
+        price: 200,
+        variants: [
+          { size: '1kg', price: 200 },
+          { size: '5kg', price: 1000 }
+        ]
+      },
+      {
+        id: 4,
+        name: 'Chocolate Multimillet Malt-500g',
+        image: 'https://i.ibb.co/N2wKvKYx/Gemini-Generated-Image-5g26d05g26d05g26.png',
+        description: 'Energy Boost! Delicious chocolate taste with packed nutrition from grains. Strong & Smart formula packed with grains. Rich chocolate taste, perfect for kids & adults.',
+        category: 'Malt Powder',
+        price: 350,
+      },
+      {
+        id: 5,
+        name: 'Nutritious Multi Millet Malt Powder-500g',
+        image: 'https://i.ibb.co/7tqxRpV3/Gemini-Generated-Image-qn6xfaqn6xfaqn6x.png',
+        description: 'Delicious multi-millet malt blended with nuts and super grains. Low GI formulation supports steady energy, aids weight management, and strengthens immunity — ideal for kids and adults as a daily nutritious drink.',
+        category: 'Malt Powder',
+        price: 250,
+      },
+      {
+        id: 6,
+        name: 'Nutritional Ragi Millet Flour-500g',
+        image: 'https://i.ibb.co/DH9BFdbx/Gemini-Generated-Image-4s7ep64s7ep64s7e.png',
+        description: 'High-quality ragi (finger millet) flour with low glycemic index to help regulate blood sugar. Supports weight management, boosts immunity, improves bone & muscle strength, and helps lower LDL cholesterol. Suitable for all age groups.',
+        category: 'Flour',
+        price: 200,
+      }
+    ];
+
+    function loadProducts() {
+      const storedProducts = JSON.parse(localStorage.getItem('logi_products'));
+      const products = storedProducts && storedProducts.length > 0 ? storedProducts : defaultProducts;
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+
+      products.forEach((product, index) => {
+        const productId = index + 1;
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        
+        const variants = product.variants || [{ size: '', price: product.price || defaultProducts[index]?.price || 399 }];
+        const defaultPrice = variants[0].price;
+        const defaultSize = variants[0].size;
+        
+        let variantHtml = '';
+        if (variants.length > 1) {
+          variantHtml = `
+            <div class="quantity-select" style="margin-bottom: 1rem;">
+              <label>Select Size:</label>
+              <select id="size-${productId}" onchange="updateProductPrice(${productId}, ${JSON.stringify(variants).replace(/"/g, '&quot;')})">
+                ${variants.map(v => `<option value="${v.size}">${v.size} - ₹${v.price}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        }
+        
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <div class="product-info">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            ${variantHtml}
+            <div class="price" id="price-${productId}">₹${defaultPrice}</div>
+            <button class="add-to-cart" onclick="addToCartWithVariant(${productId}, '${product.name.replace(/'/g, "\\'")}', '${defaultSize}')">Add to Cart</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function updateProductPrice(productId, variants) {
+      const sizeSelect = document.getElementById('size-' + productId);
+      const selectedSize = sizeSelect.value;
+      const variant = variants.find(v => v.size === selectedSize);
+      if (variant) {
+        document.getElementById('price-' + productId).textContent = '₹' + variant.price;
+      }
+    }
+
+    function addToCartWithVariant(productId, productName, size) {
+      const sizeSelect = document.getElementById('size-' + productId);
+      let selectedSize = size;
+      const priceText = document.getElementById('price-' + productId).textContent;
+      const selectedPrice = parseInt(priceText.replace('₹', ''));
+
+      if (sizeSelect) {
+        selectedSize = sizeSelect.value;
+      }
+
+      addToCart(productId, productName, selectedPrice, selectedSize);
+    }
+
+    function addToCart(productId, productName, price, size) {
+      const existingItem = cart.find(item => item.name === productName && item.size === size);
+      if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
+      } else {
+        cart.push({ id: productId, name: productName, price: price, size: size, quantity: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+    
+    function updateCartCount() {
+      document.getElementById('cart-count').textContent = cart.reduce((total, item) => total + (item.quantity || 0), 0);
+    }
+    
+    function toggleCart() {
+      window.location.href = 'cart.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+      
+      if (hamburger) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+      }
+
+      const logoutBtn = document.getElementById('logout-btn');
+      if(logoutBtn) {
+        logoutBtn.style.display = 'none';
+      }
+
+      loadProducts();
+      updateCartCount();
+      
+      setTimeout(() => {
+        document.querySelector('.products-section').classList.add('animate-in');
+      }, 100);
+    });
+  </script>
+</body>
+</html>

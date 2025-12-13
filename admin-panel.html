@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGI Admin Panel</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --accent: #8B6F47;
+      --accent-dark: #6B5839;
+      --accent-light: #A0825D;
+      --muted: #6b6b6b;
+      --bg: #FAFAF8;
+      --card: #ffffff;
+      --shadow: 0 10px 30px rgba(107,88,57,0.15);
+      --radius: 14px;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white;
+      padding: 30px 20px;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+
+    .sidebar-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .nav-item {
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .nav-item i {
+      font-size: 16px;
+      width: 20px;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(4px);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.25);
+      border-left: 4px solid #F5D76E;
+      padding-left: 12px;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .top-bar {
+      background: white;
+      border-bottom: 1px solid rgba(139, 111, 71, 0.1);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .top-bar h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--accent-dark);
+    }
+
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logout-btn {
+      padding: 10px 20px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--accent-dark);
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--accent);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-dark);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .table-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--accent-dark);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      background: #f8f8f8;
+    }
+
+    table th {
+      padding: 16px 20px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--accent-dark);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    table td {
+      padding: 16px 20px;
+      border-top: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    table tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .delete-btn {
+      padding: 6px 12px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+
+    .image-upload-area {
+      background: #f8f8f8;
+      border: 2px dashed var(--accent);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .image-upload-area:hover {
+      background: #f0f0f0;
+      border-color: var(--accent-dark);
+    }
+
+    .image-upload-area i {
+      font-size: 40px;
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
+
+    .image-upload-area p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .image-card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(107,88,57,0.2);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-info {
+      padding: 16px;
+    }
+
+    .image-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--accent-dark);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .image-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .image-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .image-card-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .view-btn {
+      background: var(--accent);
+      color: white;
+    }
+
+    .view-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .delete-card-btn {
+      background: var(--danger);
+      color: white;
+    }
+
+    .delete-card-btn:hover {
+      background: #dc2626;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--accent-dark);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .close-btn:hover {
+      color: var(--accent-dark);
+    }
+
+    .product-input-group {
+      margin-bottom: 20px;
+    }
+
+    .product-input-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--accent-dark);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .product-input-group input,
+    .product-input-group textarea,
+    .product-input-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid rgba(139, 111, 71, 0.15);
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .product-input-group input:focus,
+    .product-input-group textarea:focus,
+    .product-input-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(139, 111, 71, 0.1);
+    }
+
+    .product-input-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(139, 111, 71, 0.2);
+    }
+
+    .image-preview-modal {
+      text-align: center;
+    }
+
+    .image-preview-modal img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 40px;
+      color: var(--muted);
+    }
+
+    .empty-state i {
+      font-size: 64px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+    }
+
+    .filter-section {
+      background: white;
+      padding: 20px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .filter-section select,
+    .filter-section input {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+    }
+
+    .export-btn {
+      padding: 10px 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+
+    .export-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .search-box {
+      padding: 12px 16px;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      width: 300px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        display: none;
+        position: absolute;
+        z-index: 100;
+        height: auto;
+      }
+
+      .sidebar.active {
+        display: block;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .top-bar {
+        padding: 16px 20px;
+      }
+
+      .top-bar h1 {
+        font-size: 20px;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI">
+        <h2>LOGI</h2>
+      </div>
+
+      <div class="nav-item active" data-panel="dashboard">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </div>
+
+      <div class="nav-item" data-panel="signin-logs">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Sign-in Logs</span>
+      </div>
+
+      <div class="nav-item" data-panel="products">
+        <i class="fas fa-images"></i>
+        <span>Product Images</span>
+      </div>
+
+      <div class="nav-item" data-panel="user-activity">
+        <i class="fas fa-users"></i>
+        <span>User Activity</span>
+      </div>
+
+      <div class="nav-item" data-panel="user-signins">
+        <i class="fas fa-user-check"></i>
+        <span>User Sign-ins</span>
+      </div>
+
+      <div class="nav-item" data-panel="orders">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Customer Orders</span>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
+
+      <div class="nav-item" id="logout-link">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <h1 id="page-title">Dashboard</h1>
+        <div class="admin-info">
+          <span id="admin-email">admin@logi.com</span>
+          <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="content">
+        <!-- Dashboard Panel -->
+        <div class="panel active" id="dashboard">
+          <h2 class="section-title">Dashboard Overview</h2>
+          
+          <div class="dashboard-grid">
+            <div class="stat-card">
+              <div class="stat-label">Total Sign-ins</div>
+              <div class="stat-value" id="total-signins">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Today's Sign-ins</div>
+              <div class="stat-value" id="today-signins">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Product Images</div>
+              <div class="stat-value" id="total-images">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Active Users</div>
+              <div class="stat-value" id="active-users">0</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Recent Sign-ins</h3>
+            </div>
+            <table id="recent-signins-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Time</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="recent-signins-body">
+                <tr>
+                  <td colspan="3" style="text-align: center; color: #999;">No sign-ins yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sign-in Logs Panel -->
+        <div class="panel" id="signin-logs">
+          <h2 class="section-title">Sign-in Logs</h2>
+
+          <div class="filter-section">
+            <input type="text" class="search-box" id="search-logs" placeholder="Search by email...">
+            <button class="export-btn" onclick="exportSigninLogs()">
+              <i class="fas fa-download"></i> Export CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All Administrator Sign-ins</h3>
+            </div>
+            <table id="signin-logs-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Date & Time</th>
+                  <th>Type</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="signin-logs-body">
+                <tr>
+                  <td colspan="4" style="text-align: center; color: #999;">No sign-in logs available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Products Panel -->
+        <div class="panel" id="products">
+          <h2 class="section-title">Product Images Management</h2>
+
+          <div class="image-upload-area" onclick="document.getElementById('image-upload').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>Click to upload or drag and drop</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">PNG, JPG, GIF up to 5MB</p>
+            <input type="file" id="image-upload" accept="image/*" multiple>
+          </div>
+
+          <div class="filter-section">
+            <input type="text" id="search-images" placeholder="Search product images...">
+            <select id="sort-images">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+            </select>
+          </div>
+
+          <div class="image-grid" id="image-grid">
+            <div style="grid-column: 1/-1; padding: 60px 20px; text-align: center;">
+              <i class="fas fa-image" style="font-size: 48px; color: #ddd; margin-bottom: 16px; display: block;"></i>
+              <p style="color: #999;">No images uploaded yet. Start by uploading product images above.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Activity Panel -->
+        <div class="panel" id="user-activity">
+          <h2 class="section-title">User Activity Log</h2>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All User Actions</h3>
+            </div>
+            <table id="user-activity-table">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Details</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="user-activity-body">
+                <tr>
+                  <td colspan="4" style="text-align: center; color: #999;">No user activity yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- User Sign-ins Panel -->
+        <div class="panel" id="user-signins">
+          <h2 class="section-title">User Sign-in Details</h2>
+
+          <div class="filter-section">
+            <input type="text" class="search-box" id="search-user-signins" placeholder="Search by email...">
+            <button class="export-btn" onclick="exportUserSignins()">
+              <i class="fas fa-download"></i> Export CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All User Sign-ins from auth.html</h3>
+            </div>
+            <table id="user-signins-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Date & Time</th>
+                  <th>Device Info</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="user-signins-body">
+                <tr>
+                  <td colspan="4" style="text-align: center; color: #999;">No user sign-ins yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Customer Orders Panel -->
+        <div class="panel" id="orders">
+          <h2 class="section-title">Customer Orders</h2>
+
+          <div class="filter-section">
+            <input type="text" class="search-box" id="search-orders" placeholder="Search by customer name...">
+            <button class="export-btn" onclick="exportOrders()">
+              <i class="fas fa-download"></i> Export CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All Customer Orders</h3>
+            </div>
+            <table id="orders-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer Name</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>Amount</th>
+                  <th>Payment</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body">
+                <tr>
+                  <td colspan="9" style="text-align: center; color: #999;">No orders yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div class="modal" id="image-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Image Preview</h2>
+        <button class="close-btn" onclick="closeModal('image-modal')">&times;</button>
+      </div>
+      <div class="image-preview-modal" id="image-preview-content"></div>
+    </div>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div class="modal" id="edit-product-modal">
+    <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2>Edit Product</h2>
+        <button class="close-btn" onclick="closeModal('edit-product-modal')">&times;</button>
+      </div>
+      <form id="edit-product-form">
+        <div class="product-input-group">
+          <label for="edit-product-name">Product Name</label>
+          <input type="text" id="edit-product-name" required>
+        </div>
+        <div class="product-input-group">
+          <label for="edit-product-category">Category</label>
+          <input type="text" id="edit-product-category" required>
+        </div>
+        <div class="product-input-group">
+          <label for="edit-product-description">Description</label>
+          <textarea id="edit-product-description"></textarea>
+        </div>
+
+        <div class="product-input-group">
+          <label>Product Variants (Size/Price Options)</label>
+          <div id="variants-container" style="margin-top: 1rem;">
+            <!-- Variants will be added here -->
+          </div>
+          <button type="button" onclick="addVariantField()" style="width: 100%; padding: 10px; background: #f0f0f0; border: 2px dashed #ccc; border-radius: 8px; cursor: pointer; margin-top: 1rem; font-weight: 600;">+ Add Size Variant</button>
+        </div>
+
+        <button type="submit" class="submit-btn">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+
+    function validateSession() {
+      const authToken = sessionStorage.getItem('logi_auth_token');
+      const sessionData = sessionStorage.getItem('logi_session');
+
+      if (!authToken || !sessionData) {
+        console.warn('No valid session found. Redirecting to login.');
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+
+      try {
+        const session = JSON.parse(sessionData);
+        const now = Date.now();
+
+        if (now > session.expiresAt) {
+          console.warn('Session expired. Redirecting to login.');
+          clearSession();
+          window.location.href = 'admin-login.html';
+          return false;
+        }
+
+        return session;
+      } catch (error) {
+        console.error('Session validation error:', error);
+        clearSession();
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+    }
+
+    function clearSession() {
+      sessionStorage.removeItem('logi_auth_token');
+      sessionStorage.removeItem('logi_session');
+    }
+
+    function extendSession() {
+      const sessionData = sessionStorage.getItem('logi_session');
+      if (sessionData) {
+        try {
+          const session = JSON.parse(sessionData);
+          session.expiresAt = Date.now() + SESSION_TIMEOUT;
+          sessionStorage.setItem('logi_session', JSON.stringify(session));
+        } catch (error) {
+          console.error('Error extending session:', error);
+        }
+      }
+    }
+
+    const session = validateSession();
+    if (!session) {
+      throw new Error('Invalid session');
+    }
+
+    document.getElementById('admin-email').textContent = session.email;
+
+    const navItems = document.querySelectorAll('.nav-item[data-panel]');
+    const panels = document.querySelectorAll('.panel');
+    const pageTitle = document.getElementById('page-title');
+
+    const panelTitles = {
+      'dashboard': 'Dashboard',
+      'signin-logs': 'Sign-in Logs',
+      'products': 'Product Images',
+      'user-activity': 'User Activity',
+      'user-signins': 'User Sign-ins',
+      'orders': 'Customer Orders'
+    };
+
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        extendSession();
+        const panelId = this.dataset.panel;
+        
+        navItems.forEach(nav => nav.classList.remove('active'));
+        this.classList.add('active');
+        
+        panels.forEach(panel => panel.classList.remove('active'));
+        document.getElementById(panelId).classList.add('active');
+        
+        pageTitle.textContent = panelTitles[panelId];
+      });
+    });
+
+    function logout() {
+      clearSession();
+      window.location.href = 'admin-login.html';
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('logout-link').addEventListener('click', logout);
+
+    document.addEventListener('click', extendSession);
+    document.addEventListener('keypress', extendSession);
+
+    setInterval(() => {
+      const isValid = validateSession();
+      if (!isValid) {
+        logout();
+      }
+    }, 5000);
+
+    function loadDashboardStats() {
+      extendSession();
+      const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+      const images = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const userSignins = JSON.parse(localStorage.getItem('logi_user_signins')) || [];
+      
+      document.getElementById('total-signins').textContent = logs.length;
+      
+      const today = new Date().toDateString();
+      const todayLogins = logs.filter(log => new Date(log.timestamp).toDateString() === today).length;
+      document.getElementById('today-signins').textContent = todayLogins;
+      
+      document.getElementById('total-images').textContent = images.length;
+      
+      const uniqueEmails = new Set(userSignins.map(signin => signin.email));
+      document.getElementById('active-users').textContent = uniqueEmails.size;
+
+      loadRecentSignins();
+    }
+
+    function loadRecentSignins() {
+      const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+      const tbody = document.getElementById('recent-signins-body');
+      
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #999;">No sign-ins yet</td></tr>';
+        return;
+      }
+
+      const recentLogs = logs.slice(-5).reverse();
+      tbody.innerHTML = recentLogs.map(log => {
+        const date = new Date(log.timestamp);
+        return `
+          <tr>
+            <td>${log.email}</td>
+            <td>${date.toLocaleTimeString()}</td>
+            <td>${date.toLocaleDateString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function loadSigninLogs() {
+      extendSession();
+      const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+      const tbody = document.getElementById('signin-logs-body');
+      
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No sign-in logs available</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = logs.reverse().map((log, index) => {
+        const date = new Date(log.timestamp);
+        return `
+          <tr>
+            <td>${log.email}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><span class="badge badge-success">Admin</span></td>
+            <td>
+              <button class="delete-btn" onclick="deleteSigninLog(${logs.length - 1 - index})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function deleteSigninLog(index) {
+      extendSession();
+      if (confirm('Are you sure you want to delete this sign-in log?')) {
+        const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+        logs.splice(index, 1);
+        localStorage.setItem('logi_signin_logs', JSON.stringify(logs));
+        loadSigninLogs();
+        loadDashboardStats();
+      }
+    }
+
+    function exportSigninLogs() {
+      extendSession();
+      const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+      
+      let csv = 'Email,Timestamp,Type,Role\n';
+      logs.forEach(log => {
+        csv += `${log.email},"${log.timestamp}",${log.type},${log.role || 'N/A'}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `signin-logs-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+      extendSession();
+      const files = Array.from(e.target.files);
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      let loadedCount = 0;
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const product = {
+            id: Date.now() + Math.random(),
+            name: file.name.split('.')[0],
+            image: event.target.result,
+            uploadDate: new Date().toISOString(),
+            category: 'Uncategorized',
+            price: 0,
+            description: '',
+            variants: [
+              { size: '', price: 0 }
+            ]
+          };
+          products.push(product);
+          
+          const activityLog = JSON.parse(localStorage.getItem('logi_activity_log')) || [];
+          activityLog.push({
+            action: 'Image Uploaded',
+            details: `Uploaded ${file.name}`,
+            timestamp: new Date().toISOString(),
+            status: 'Success'
+          });
+          localStorage.setItem('logi_activity_log', JSON.stringify(activityLog));
+          
+          loadedCount++;
+          if (loadedCount === files.length) {
+            localStorage.setItem('logi_products', JSON.stringify(products));
+            loadProductImages();
+            loadUserActivity();
+            loadDashboardStats();
+            document.getElementById('image-upload').value = '';
+          }
+        };
+        reader.onerror = function() {
+          alert('Error reading file: ' + file.name);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const uploadArea = document.querySelector('.image-upload-area');
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.style.backgroundColor = '#e8e8e8';
+      uploadArea.style.borderColor = '#6B5839';
+    });
+
+    uploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.style.backgroundColor = '#f8f8f8';
+      uploadArea.style.borderColor = '#8B6F47';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.style.backgroundColor = '#f8f8f8';
+      uploadArea.style.borderColor = '#8B6F47';
+      
+      const files = e.dataTransfer.files;
+      document.getElementById('image-upload').files = files;
+      const event = new Event('change', { bubbles: true });
+      document.getElementById('image-upload').dispatchEvent(event);
+    });
+
+    function loadProductImages() {
+      extendSession();
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const grid = document.getElementById('image-grid');
+
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; padding: 60px 20px; text-align: center;">
+            <i class="fas fa-image" style="font-size: 48px; color: #ddd; margin-bottom: 16px; display: block;"></i>
+            <p style="color: #999;">No images uploaded yet. Start by uploading product images above.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = products.map((product, index) => `
+        <div class="image-card">
+          <img src="${product.image}" alt="${product.name}">
+          <div class="image-info">
+            <div class="image-name">${product.name}</div>
+            <div class="image-meta">₹${product.price || 0} | ${new Date(product.uploadDate).toLocaleDateString()}</div>
+            <div class="image-card-actions">
+              <button class="view-btn" onclick="editProduct(${index})" style="background: var(--accent-light); flex: 1.5;">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="delete-card-btn" onclick="deleteProduct(${index})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('total-images').textContent = products.length;
+    }
+
+    function viewImage(index) {
+      extendSession();
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const product = products[index];
+      const content = document.getElementById('image-preview-content');
+      
+      content.innerHTML = `
+        <img src="${product.image}" style="max-width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px;">
+        <div style="text-align: left;">
+          <p><strong>Product Name:</strong> ${product.name}</p>
+          <p><strong>Category:</strong> ${product.category}</p>
+          <p><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+          <p><strong>Description:</strong> ${product.description || 'N/A'}</p>
+          <p><strong>Upload Date:</strong> ${new Date(product.uploadDate).toLocaleString()}</p>
+          <button class="submit-btn" style="margin-top: 20px;" onclick="editProduct(${index})">Edit Product</button>
+        </div>
+      `;
+      
+      document.getElementById('image-modal').classList.add('active');
+    }
+
+    function editProduct(index) {
+      extendSession();
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const product = products[index];
+
+      document.getElementById('edit-product-name').value = product.name;
+      document.getElementById('edit-product-category').value = product.category;
+      document.getElementById('edit-product-description').value = product.description;
+
+      const variantsContainer = document.getElementById('variants-container');
+      variantsContainer.innerHTML = '';
+      
+      const variants = product.variants || [{ size: '', price: 0 }];
+      variants.forEach((variant, vIndex) => {
+        addVariantField(vIndex, variant.size, variant.price, variantsContainer);
+      });
+
+      closeModal('image-modal');
+      document.getElementById('edit-product-modal').classList.add('active');
+
+      document.getElementById('edit-product-form').onsubmit = function(e) {
+        e.preventDefault();
+        product.name = document.getElementById('edit-product-name').value;
+        product.category = document.getElementById('edit-product-category').value;
+        product.description = document.getElementById('edit-product-description').value;
+
+        const variantInputs = document.querySelectorAll('.variant-input-group');
+        product.variants = [];
+        variantInputs.forEach(input => {
+          const size = input.querySelector('.variant-size').value;
+          const price = parseFloat(input.querySelector('.variant-price').value) || 0;
+          if (size || price) {
+            product.variants.push({ size, price });
+          }
+        });
+
+        if (product.variants.length === 0) {
+          product.variants = [{ size: '', price: 0 }];
+        }
+
+        products[index] = product;
+        localStorage.setItem('logi_products', JSON.stringify(products));
+        
+        const activityLog = JSON.parse(localStorage.getItem('logi_activity_log')) || [];
+        activityLog.push({
+          action: 'Product Updated',
+          details: `Updated ${product.name}`,
+          timestamp: new Date().toISOString(),
+          status: 'Success'
+        });
+        localStorage.setItem('logi_activity_log', JSON.stringify(activityLog));
+
+        loadProductImages();
+        loadUserActivity();
+        closeModal('edit-product-modal');
+      };
+    }
+
+    function addVariantField(vIndex, size = '', price = '', container = null) {
+      const targetContainer = container || document.getElementById('variants-container');
+      const variantDiv = document.createElement('div');
+      variantDiv.className = 'variant-input-group';
+      variantDiv.style.cssText = 'background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: flex-end;';
+      
+      variantDiv.innerHTML = `
+        <input type="text" class="variant-size" placeholder="e.g., 500g" value="${size}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
+        <input type="number" class="variant-price" placeholder="Price" value="${price}" step="0.01" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
+        <button type="button" class="delete-btn" onclick="this.parentElement.remove()" style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Remove</button>
+      `;
+      
+      targetContainer.appendChild(variantDiv);
+    }
+
+    function deleteProduct(index) {
+      extendSession();
+      if (confirm('Are you sure you want to delete this product image?')) {
+        const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+        const productName = products[index].name;
+        products.splice(index, 1);
+        localStorage.setItem('logi_products', JSON.stringify(products));
+
+        const activityLog = JSON.parse(localStorage.getItem('logi_activity_log')) || [];
+        activityLog.push({
+          action: 'Product Deleted',
+          details: `Deleted ${productName}`,
+          timestamp: new Date().toISOString(),
+          status: 'Success'
+        });
+        localStorage.setItem('logi_activity_log', JSON.stringify(activityLog));
+
+        loadProductImages();
+        loadUserActivity();
+      }
+    }
+
+    function loadUserActivity() {
+      extendSession();
+      const activity = JSON.parse(localStorage.getItem('logi_activity_log')) || [];
+      const tbody = document.getElementById('user-activity-body');
+
+      if (activity.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No user activity yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = activity.reverse().map((log, index) => {
+        const date = new Date(log.timestamp);
+        return `
+          <tr>
+            <td>${log.action}</td>
+            <td>${log.details}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><span class="badge badge-success">${log.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    window.addEventListener('click', function(event) {
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        if (event.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+
+    document.getElementById('search-logs').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const logs = JSON.parse(localStorage.getItem('logi_signin_logs')) || [];
+      const tbody = document.getElementById('signin-logs-body');
+
+      const filtered = logs.filter(log => log.email.toLowerCase().includes(searchTerm));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No matching results</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.reverse().map((log, index) => {
+        const date = new Date(log.timestamp);
+        return `
+          <tr>
+            <td>${log.email}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><span class="badge badge-success">Admin</span></td>
+            <td>
+              <button class="delete-btn" onclick="deleteSigninLog(${logs.indexOf(log)})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    });
+
+    document.getElementById('search-images').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const cards = document.querySelectorAll('.image-card');
+
+      cards.forEach((card, index) => {
+        const productName = products[index].name.toLowerCase();
+        if (productName.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    document.getElementById('sort-images').addEventListener('change', function() {
+      const products = JSON.parse(localStorage.getItem('logi_products')) || [];
+      const sortType = this.value;
+
+      switch(sortType) {
+        case 'newest':
+          products.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+          break;
+        case 'oldest':
+          products.sort((a, b) => new Date(a.uploadDate) - new Date(b.uploadDate));
+          break;
+        case 'name-asc':
+          products.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          products.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+      }
+
+      localStorage.setItem('logi_products', JSON.stringify(products));
+      loadProductImages();
+    });
+
+    function loadUserSignins() {
+      extendSession();
+      const userSignins = JSON.parse(localStorage.getItem('logi_user_signins')) || [];
+      const tbody = document.getElementById('user-signins-body');
+
+      if (userSignins.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No user sign-ins available</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = userSignins.reverse().map((signin, index) => {
+        const date = new Date(signin.timestamp);
+        const deviceShort = signin.device ? signin.device.substring(0, 50) + '...' : 'Unknown';
+        return `
+          <tr>
+            <td>${signin.email}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><small title="${signin.device}">${deviceShort}</small></td>
+            <td>
+              <button class="delete-btn" onclick="deleteUserSignin(${userSignins.length - 1 - index})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function deleteUserSignin(index) {
+      extendSession();
+      if (confirm('Are you sure you want to delete this user sign-in record?')) {
+        const userSignins = JSON.parse(localStorage.getItem('logi_user_signins')) || [];
+        userSignins.splice(index, 1);
+        localStorage.setItem('logi_user_signins', JSON.stringify(userSignins));
+        loadUserSignins();
+      }
+    }
+
+    function exportUserSignins() {
+      extendSession();
+      const userSignins = JSON.parse(localStorage.getItem('logi_user_signins')) || [];
+      
+      let csv = 'Email,Timestamp,Type,Device\n';
+      userSignins.forEach(signin => {
+        csv += `${signin.email},"${signin.timestamp}",${signin.type},"${signin.device || 'N/A'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `user-signins-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('search-user-signins').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const userSignins = JSON.parse(localStorage.getItem('logi_user_signins')) || [];
+      const tbody = document.getElementById('user-signins-body');
+
+      const filtered = userSignins.filter(signin => signin.email.toLowerCase().includes(searchTerm));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No matching results</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.reverse().map((signin, index) => {
+        const date = new Date(signin.timestamp);
+        const deviceShort = signin.device ? signin.device.substring(0, 50) + '...' : 'Unknown';
+        return `
+          <tr>
+            <td>${signin.email}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><small title="${signin.device}">${deviceShort}</small></td>
+            <td>
+              <button class="delete-btn" onclick="deleteUserSignin(${userSignins.indexOf(signin)})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    });
+
+    function loadOrders() {
+      extendSession();
+      const orders = JSON.parse(localStorage.getItem('logi_orders')) || [];
+      const tbody = document.getElementById('orders-body');
+
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">No orders yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = orders.reverse().map((order, index) => {
+        const date = new Date(order.timestamp);
+        const total = order.cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+        const shipping = 100;
+        const tax = Math.round(total * 0.18);
+        const finalTotal = total + shipping + tax;
+        
+        const address = `${order.customer.address}, ${order.customer.city}, ${order.customer.state} - ${order.customer.pincode}`;
+        
+        return `
+          <tr>
+            <td><strong>${order.orderId}</strong></td>
+            <td>${order.customer.name}</td>
+            <td>${order.customer.phone}</td>
+            <td><small title="${address}">${address.substring(0, 30)}...</small></td>
+            <td>₹${finalTotal}</td>
+            <td>${order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1)}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><span class="badge badge-success">${order.status}</span></td>
+            <td>
+              <button class="delete-btn" onclick="deleteOrder(${orders.length - 1 - index})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function deleteOrder(index) {
+      extendSession();
+      if (confirm('Are you sure you want to delete this order?')) {
+        const orders = JSON.parse(localStorage.getItem('logi_orders')) || [];
+        orders.splice(index, 1);
+        localStorage.setItem('logi_orders', JSON.stringify(orders));
+        loadOrders();
+      }
+    }
+
+    function exportOrders() {
+      extendSession();
+      const orders = JSON.parse(localStorage.getItem('logi_orders')) || [];
+      
+      let csv = 'Order ID,Customer Name,Email,Phone,Address,City,State,Pincode,Total Amount,Payment Method,Date & Time,Status\n';
+      orders.forEach(order => {
+        const total = order.cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+        const shipping = 100;
+        const tax = Math.round(total * 0.18);
+        const finalTotal = total + shipping + tax;
+        
+        csv += `${order.orderId},"${order.customer.name}","${order.customer.email}","${order.customer.phone}","${order.customer.address}","${order.customer.city}","${order.customer.state}","${order.customer.pincode}",${finalTotal},"${order.paymentMethod}","${order.timestamp}","${order.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('search-orders').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const orders = JSON.parse(localStorage.getItem('logi_orders')) || [];
+      const tbody = document.getElementById('orders-body');
+
+      const filtered = orders.filter(order => order.customer.name.toLowerCase().includes(searchTerm));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">No matching results</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.reverse().map((order, index) => {
+        const date = new Date(order.timestamp);
+        const total = order.cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+        const shipping = 100;
+        const tax = Math.round(total * 0.18);
+        const finalTotal = total + shipping + tax;
+        
+        const address = `${order.customer.address}, ${order.customer.city}, ${order.customer.state} - ${order.customer.pincode}`;
+        
+        return `
+          <tr>
+            <td><strong>${order.orderId}</strong></td>
+            <td>${order.customer.name}</td>
+            <td>${order.customer.phone}</td>
+            <td><small title="${address}">${address.substring(0, 30)}...</small></td>
+            <td>₹${finalTotal}</td>
+            <td>${order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1)}</td>
+            <td>${date.toLocaleString()}</td>
+            <td><span class="badge badge-success">${order.status}</span></td>
+            <td>
+              <button class="delete-btn" onclick="deleteOrder(${orders.indexOf(order)})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    });
+
+    loadDashboardStats();
+    loadSigninLogs();
+    loadProductImages();
+    loadUserActivity();
+    loadUserSignins();
+    loadOrders();
+
+    setInterval(loadDashboardStats, 5000);
+  </script>
+</body>
+</html>

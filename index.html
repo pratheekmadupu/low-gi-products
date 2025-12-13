@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGI - Premium Nutrition</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .hero { height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; color:white; /* background handled by video + overlay in CSS */ }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:9.0rem; text-shadow:0 4px 15px rgba(0,0,0,0.6); }
+    .hero p { font-size:2.6rem; max-width:10000px; margin:2rem auto; }
+    .logout-btn {
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #8B6F47, #6B5839);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      margin-left: auto;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139,111,71,0.3);
+      background: linear-gradient(90deg, #6B5839, #5A4829);
+    }
+
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><img src="https://i.ibb.co/Mkhpj225/favicon-largefill-1.png" alt="LOGI"></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">Shop</a>
+        <a href="demo.html">Demo</a>
+        <a href="franchise.html">Franchise</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <!-- background video: keep muted + playsinline for autoplay on mobile -->
+    <video class="hero-video" autoplay muted loop playsinline poster="https://i.ibb.co/DPXcb7fk/high-angle-farmland-view.jpg">
+      <!-- Replace src with your hosted mp4/webm. Provide both for broader support -->
+      <source src="videos/hero-video.mp4" type="video/mp4">
+      <source src="videos/hero-video.webm" type="video/webm">
+      <!-- fallback image will show if video not supported -->
+    </video>
+    <div>
+      <h1>LOGI</h1>
+      <p>Unleash Your Strength with Science-Backed Nutrition</p>
+      <a href="products.html" class="btn">Shop Now</a>
+    </div>
+  </section>
+
+  <a href="https://wa.me/919985309102" target="_blank" class="whatsapp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <footer>© 2025 LOGI - All Rights Reserved</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+      
+      if (hamburger) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+      }
+      
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+
+      // animate on initial load (small delay for smoother entry)
+      setTimeout(() => hero.classList.add('animate-in'), 150);
+
+      // helper to retrigger the animation (used when clicking logo/home while on same page)
+      function retrigger(e) {
+        // if this is a navigation to index.html from another page, do not intercept
+        const href = (e && e.currentTarget && e.currentTarget.getAttribute('href')) || '';
+        const isIndexLink = href.includes('index.html') || href === '' || href === '#';
+
+        // if clicking a link which targets index.html but we're already on index, animate instead of navigating
+        if (isIndexLink && (location.pathname.endsWith('index.html') || location.pathname.endsWith('/') || location.pathname === '')) {
+          e && e.preventDefault();
+          hero.classList.remove('animate-in');
+          // force reflow to restart CSS animation
+          void hero.offsetWidth;
+          hero.classList.add('animate-in');
+        }
+      }
+
+      // logo click
+      const logo = document.querySelector('.logo');
+      if (logo) logo.addEventListener('click', retrigger);
+
+      // nav home link (common case)
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        const href = a.getAttribute('href') || '';
+        if (href.includes('index.html') || /home/i.test(a.textContent)) {
+          a.addEventListener('click', retrigger);
+        }
+      });
+
+      // Hide logout button since authentication is disabled
+      const logoutBtn = document.getElementById('logout-btn');
+      if(logoutBtn) {
+        logoutBtn.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
